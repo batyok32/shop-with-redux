@@ -1,6 +1,10 @@
 .footer {
+  margin-top: 10px;
+  padding: 10px;
+  //   box-shadow: 1px lightgray;
+  border-top: 1px solid lightgray;
   .footer__wrap {
     max-width: 1450px;
-    margin: 0 auto;
+    margin-left: 50px;
   }
 }

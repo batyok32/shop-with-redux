@@ -29,6 +29,7 @@
       }
       a {
         background: rgba(255, 255, 255, 0.9);
+        // background:  #ff6750;
         position: absolute;
         z-index: 2;
         top: 50%;
@@ -43,6 +44,10 @@
         padding: 10px 15px;
         border: 1px solid black;
         color: black;
+        // color: #ff6750;
+      }
+      a:hover {
+        background: #ff6750;
       }
     }
   }

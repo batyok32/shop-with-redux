@@ -73,12 +73,32 @@
       }
       li {
         list-style-type: none;
+        margin-right: 15px;
+
+        .last {
+          margin-right: 0;
+        }
+        h3 {
+          font-size: 1.8rem;
+          line-height: 1;
+          color: black;
+          text-transform: uppercase;
+          cursor: pointer;
+        }
+        h3:hover {
+          color: #ff6750;
+        }
 
         a {
           font-size: 1.8rem;
           line-height: 1;
           color: black;
+          // color: #ff6750;
           text-transform: uppercase;
+          cursor: pointer;
+        }
+        a:hover {
+          color: #ff6750;
         }
       }
     }
