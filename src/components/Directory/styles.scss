@@ -1,0 +1,49 @@
+.directory {
+  .wrap {
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    .item {
+      position: relative;
+      background-color: #fff;
+      width: 700px;
+      padding: 20px;
+      max-width: 85vw;
+      height: 100%;
+      min-height: 50vh;
+      box-shadow: 0px 18px 53px 0px rgba(0, 0, 0, 0.3);
+      //   border-radius: 20px;
+      background-size: cover;
+      background-position: center;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.3);
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+      a {
+        background: rgba(255, 255, 255, 0.9);
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        left: 50%;
+        font-size: 2rem;
+        line-height: 1;
+        font-weight: 400;
+        text-transform: uppercase;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        padding: 10px 15px;
+        border: 1px solid black;
+        color: black;
+      }
+    }
+  }
+}
