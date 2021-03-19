@@ -166,3 +166,83 @@ REDUX
     })
     export default connect(mapStateToProps, mapDispatchToProps)(App);
 ===========================================================================
+
+
+
+
+
+===========================================================================
+Tutorial 7 >>> react hooks
+==========================
+Custom React Hook
+1. Create a folder hoc >>> higher order component
+
+2. Create withAuth.js
+  2.1 const WithAuth = props => props.children;
+
+3. Create a folder customHooks
+4. Create index.js and useAuth.js
+ROOL: customHooks must start with `use`
+5. set useAuth.js 
+    "is needed for taking out unathorized user to login page"
+    5.1 import useSelector from react-redux
+    5.2 take info from redux
+    EX:
+    const mapState = ({user}) => ({
+      currentUser: user.currentUser
+    })
+    5.3 export user 
+    Ex: 
+    import {useEffect} from react
+      const useAuth = props => {
+        const {currentUser} = useSelector(mapState);
+        useEffect(() => {
+          if (!currentUser){
+              props.history.push('/login')
+          }
+  
+      }, [currentUser])
+      return currentUser
+      }
+      export default useAuth;
+    
+    5.4 set index.js >> to take all customHooks from one file
+    ex: 
+      import useAuth from "./useAuth"
+      export {
+          useAuth
+      }
+    5.5 set useAuth.js(useEffect)
+    
+6. Set withAuth.js
+    6.1 import {useAuth} from "./../customHooks"
+      import {withRouter} from "react-router-dom"
+
+    const WithAuth = props => useAuth(props) && props.children;
+    
+    export default withRouter(WithAuth);
+
+7. Go to app.js
+    7.1 import Dashboard
+      7.2 Create a new route /dashboard
+      7.3 create a link to dashboard in header
+    7.4 import WithAuth from hoc/withAuth
+    7.5  Wrap dashboard router
+    7.6 Remove currentUser? <Redirect> : ()
+    7.7 Go to sign up and write it after reset();
+    props.history.push('/')
+    import withRouter 
+    export default withRouter(Signup)
+    7.8 go to sign in also do the same thing
+    7.9 go to a header write a link to a dashboard
+8. Create a new page Dashboard 
+      8.1 import React from react
+      import ./styles.scss
+      const Dashboard = props => {
+        return (
+          <h1>You are logged in</h1>
+        )
+      }
+      export default Dashboard
+0. KNowledge : witRouter gives access to history
+  

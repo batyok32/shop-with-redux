@@ -1,40 +1,52 @@
 import React, {useState} from 'react'
 import "./styles.scss"
+
+// React Router
 import {useHistory, withRouter} from "react-router-dom"
 
+// Components
 import AuthWrapper from "./../AuthWrapper"
 import FormInput from "./../forms/FormInput"
 import Button from "./../forms/Button"
 
+// Firebase
 import {auth} from "./../../firebase/utils"
 
 function EmailPassword() {
+    //input fields
     const [email, setEmail] = useState('');
+
     const [errors, setErrors] = useState([]);
-    const [completed, setCompleted] = useState(false)
     const [progress, setProgress] = useState(false)
+    
     const history =useHistory();
+
+    // To define header
     const configAuthWrapper = {
         headline:'Email Password'
     }
+
+    // Submit
     const handleSubmit = async (e) => {
         e.preventDefault();
         setProgress(true)
 
-        const config = {
-            url: "http://localhost:3000/login"
-        }
-
         try {
+            const config = {
+                url: "http://localhost:3000/login"
+            }
             await auth.sendPasswordResetEmail(email,config)
             .then(() => {                
                 history.push("/login")
+                setProgress(false)
             })
             .catch((err) => {
-                setErrors(err.message)
+                setErrors(err)
+                console.log("error from email Password 1", err);
             })
         }catch (err) {
-            console.log(err);
+            setErrors(err)
+            console.log("error from email Password 2", err);
         }
         setProgress(false)
     }
@@ -42,7 +54,7 @@ function EmailPassword() {
         <AuthWrapper {...configAuthWrapper}>
             <div className="formWrap">
                 <form onSubmit={handleSubmit}>
-                    {errors ? (<h5 className='error'>{errors}</h5>) : (<h5 className='error'></h5>)}
+                    {errors ? (<h5 className='error'>{errors.message}</h5>) : (<h5 className='error'></h5>)}
                     <FormInput 
                         label="Email"
                         type="email"
@@ -51,8 +63,7 @@ function EmailPassword() {
                         placeholder="Email"
                         onChange={e => setEmail(e.target.value)}
                     />
-                    {/* <hr style={{margin:10}}/> */}
-                    {/* <p className="description"><strong>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestias sint placeat adipisci, velit dolore quae suscipit harum perspiciatis ipsam illum corporis earum! Autem laborum rem odio consequatur rerum explicabo ullam!</strong></p> */}
+    
                     <div className="signIn__socialSignIn">
                         <div className="signIn__row">
                             <Button type="submit">

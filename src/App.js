@@ -1,18 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import {Route, Switch, Redirect} from 'react-router-dom'
+import React, { useEffect } from 'react'
 import './default.scss'
-// import Header from "./components/Header"
 
-// layouts
+// hoc
+import WithAuth from "./hoc/withAuth"
+
+// React router
+import {Route, Switch, Redirect} from 'react-router-dom'
+
+// Layouts
 import MainLayout from "./layouts/MainLayout"
 import HomepageLayout from "./layouts/HomepageLayout"
 
-// pages
+// Pages
 import Homepage from "./pages/Homepage"
 import Recovery from "./pages/Recovery"
 import LoginWithPhone from "./pages/LoginWithPhone"
 import Registration from "./pages/Registration"
 import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+
+
+// Firebase
 import {auth, handleUserProfile} from "./firebase/utils"
 
 // Redux
@@ -24,7 +32,7 @@ function App({currentUser, setCurrentUser}) {
 
   // check if current user
   useEffect(() => {
-    const listener = auth.onAuthStateChanged(async userAuth => {
+    const authListener = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         const userRef = await handleUserProfile(userAuth);
         userRef.onSnapshot(snapshot => {
@@ -38,6 +46,9 @@ function App({currentUser, setCurrentUser}) {
       }
     })
     console.log(currentUser, "current user");
+    return ()=> {
+      authListener();
+    }
     
   }, [])
   return (
@@ -45,13 +56,13 @@ function App({currentUser, setCurrentUser}) {
       <div className="app__main">
         <Switch >
           <Route path='/registration' 
-          render={() => currentUser ? <Redirect to="/"/> : (
+          render={() => (
             <MainLayout >
               <Registration />
             </MainLayout>
           )} />
           <Route path='/phonelogin' 
-          render={() => currentUser ? <Redirect to="/"/> : (
+          render={() => (
             <MainLayout >
               <LoginWithPhone />
             </MainLayout>
@@ -62,8 +73,16 @@ function App({currentUser, setCurrentUser}) {
               <Recovery />
             </MainLayout>
           )} />
+          <Route path='/dashboard' 
+          render={() => (
+            <WithAuth>
+              <MainLayout >
+                <Dashboard />
+              </MainLayout>
+            </WithAuth>
+          )} />
           <Route path='/login' 
-          render={() => currentUser ? <Redirect to="/"/> : (
+          render={() => (
             <MainLayout >
               <Login />
             </MainLayout>

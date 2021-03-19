@@ -1,32 +1,56 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import "./styles.scss"
+
+// Components
 import Button from "./../forms/Button"
 import FormInput from "./../forms/FormInput"
-import { signInWithGoogle, auth} from "./../../firebase/utils"
 import AuthWrapper from "./../AuthWrapper"
 
-import {Link} from "react-router-dom"
-function SignIn () {
+
+// Firebase
+import { signInWithGoogle, auth} from "./../../firebase/utils"
+
+// react router
+import {Link, withRouter} from "react-router-dom"
+
+
+function SignIn (props) {
+
+    // Define react states
+
+    // Used for input
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    // to define does function ended successfully or not
     const [errors, setErrors] = useState([]);
     const [completed, setCompleted] = useState(false)
     const [progress, setProgress] = useState(false)
+
+    // Define a header
     const configAuthWrapper ={
         headline: "Login"
     }
+
+    const resetForm = () => {
+        setEmail('');
+        setPassword('');
+        setErrors([]);
+        setCompleted(true);
+        setProgress(false);
+    }
+
+    // Define a submit
     const handleSubmit = async (e) => {
         e.preventDefault();
         setProgress(true)
         try {
             await auth.signInWithEmailAndPassword(email, password);
-            
+            resetForm();
+            props.history.push('/')
         }catch (err) {
             setErrors(err)
-            console.log(err);
-        }
-        if (!errors) {
-            setCompleted(true)
+            console.log(err, "ERROR from sign in component");
         }
         setProgress(false)
 
@@ -37,12 +61,6 @@ function SignIn () {
         <AuthWrapper {...configAuthWrapper}>
              <div className="signIn">
                     
-                
-            {/*    <div className="signIn__wrap">
-                    <h2 className="signIn__logo">
-                    Login
-                    </h2>
-                    <hr/> */}
                     <div className="signIn__formWrap">
                         {progress ? <h5 className='error'>Loading</h5> : ( <h5 className='error'>{errors.message}</h5>)}
                    
@@ -100,10 +118,9 @@ function SignIn () {
 
                         </form>
                     </div>
-                {/* </div> */}
             </div> 
         </AuthWrapper>
     )
 }
 
-export default SignIn
+export default withRouter(SignIn)

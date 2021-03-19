@@ -1,37 +1,66 @@
 import React, { useState } from 'react'
 import "./styles.scss"
+
+// React router
+import {withRouter} from 'react-router-dom'
+ 
+// Components
 import FormInput from "./../forms/FormInput"
 import Button from './../forms/Button';
-import {auth, handleUserProfile} from "./../../firebase/utils"
 import AuthWrapper from '../AuthWrapper';
 
+// Firebase
+import {auth, handleUserProfile} from "./../../firebase/utils"
 
-function SignUp() {
+
+function SignUp(props) {
+    // React state
+    // used for form
     const [displayName, setDisplayName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState([]);
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    // To define does function ended successfully or not
+    const [errors, setErrors] = useState([]);
     const [progress, setProgress] = useState(false)
 
+    // to define a header
     const configAuthWrapper = {
         headline:"Registration"
     }
+
+    // reset a form
+    const resetForm = () => {
+        setDisplayName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setProgress(false);
+    }
+
+    // to Define a submit function
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // Validating form
         if (password !== confirmPassword) {
             const err = ['Password don\'t match']
             setErrors(err)
             return
         }
+
         setProgress(true)
         try {
             const user = await auth.createUserWithEmailAndPassword(email, password);
             await handleUserProfile(user, { displayName })
+            resetForm();
+            props.history.push('/')
         }catch(err) {
-            setErrors(err)
+            // catched error
+            setErrors(err);
         }
-        setProgress(false)
+        // Function ended
+        setProgress(false);
 
     }
     return (
@@ -84,4 +113,4 @@ function SignUp() {
     )
 }
 
-export default SignUp
+export default withRouter(SignUp)

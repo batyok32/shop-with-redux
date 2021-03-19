@@ -26,6 +26,11 @@ function Header({currentUser}) {
                             <li>
                                 <h3 onClick={() => auth.signOut()} className='header__info__text'>Logout</h3>
                             </li>
+                            <li className='header__li '> 
+                            <Link to='/dashboard'>
+                                <h3 className='header__info__text'>My account</h3>
+                            </Link>
+                        </li>
                         </ul>
                     )}
                     {!currentUser && (
@@ -35,6 +40,7 @@ function Header({currentUser}) {
                                 <h3 className='header__info__text'>Register</h3>
                             </Link>
                         </li>
+                       
                         <li className='header__li' > 
                             <Link to='/login'>
                                 <h3 className='header__info__text'>Login</h3>
