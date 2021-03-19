@@ -1,9 +1,14 @@
 import React from 'react';
 import "./styles.scss";
+import {connect} from "react-redux"
 import logo from "./../../assets/logo.jpeg"
 import {Link} from 'react-router-dom'
 import { auth} from "./../../firebase/utils"
 
+
+const mapStateToProps = ({user}) => ({
+    currentUser: user.currentUser
+})
 
 function Header({currentUser}) {
     return (
@@ -19,9 +24,7 @@ function Header({currentUser}) {
                     {currentUser &&  (
                         <ul>
                             <li>
-                                {/* <Link> */}
-                                    <h3 onClick={() => auth.signOut()} className='header__info__text'>Logout</h3>
-                                {/* </Link> */}
+                                <h3 onClick={() => auth.signOut()} className='header__info__text'>Logout</h3>
                             </li>
                         </ul>
                     )}
@@ -48,4 +51,4 @@ function Header({currentUser}) {
 }
 
 
-export default Header
+export default connect(mapStateToProps, null)(Header)

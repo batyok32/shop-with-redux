@@ -3,6 +3,7 @@ import "./styles.scss"
 import FormInput from "./../forms/FormInput"
 import Button from './../forms/Button';
 import {auth, handleUserProfile} from "./../../firebase/utils"
+import AuthWrapper from '../AuthWrapper';
 
 
 function SignUp() {
@@ -12,6 +13,9 @@ function SignUp() {
     const [errors, setErrors] = useState([]);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [progress, setProgress] = useState(false)
+    const configAuthWrapper = {
+        headline:"Registration"
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
@@ -25,32 +29,17 @@ function SignUp() {
             const {user}= await auth.createUserWithEmailAndPassword(email, password);
             await handleUserProfile(user, { displayName })
         }catch(err) {
-
+            setErrors(err)
         }
         setProgress(false)
 
     }
     return (
-        <div className="signUp">
-            <div className="signUp__wrap">
-                <h2>
-                    Sign up
-                </h2>
-                {progress && (
-                    <h1>Loadding</h1>
-                )}
-                {errors.length > 0 && (
-                    <ul className="signUp__errors">
-                        {errors.map((err, index) => {
-                            return (
-                                <li key={index}>
-                                    {err}
-                                </li>
-                            )
-                        })}
-                    </ul>
-                )}
+       
+            <AuthWrapper {...configAuthWrapper}>
+                
                 <div className="signUp__formWrap">
+                    {progress ? <h5 className='error'>Loading</h5> : ( <h5 className='error'>{errors.message}</h5>)}
                     <form onSubmit={handleSubmit} action="">
                         <FormInput 
                             label="Full Name"
@@ -86,13 +75,12 @@ function SignUp() {
                         />
 
                         <Button style={{marginTop:15}} type="submit" >
-                            Register
+                            {progress ? "Loading" : "Register"}
                         </Button>
                     </form>
                 </div>
-            </div>
+            </AuthWrapper>
             
-        </div>
     )
 }
 

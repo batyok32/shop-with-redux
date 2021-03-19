@@ -1,0 +1,43 @@
+.authWrapper {
+  display: flex;
+  width: 100%;
+  max-width: 40rem;
+  margin: 4rem auto 5rem;
+  border: 1px solid black;
+  flex-direction: column;
+}
+
+.authWrapper__wrap {
+  padding: 20px;
+  hr {
+    width: 75%;
+    margin: 0 auto;
+    margin-top: 10px;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    line-height: 1;
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0 auto;
+  }
+}
+
+.error {
+  margin-top: 10px !important;
+  text-align: center;
+  // justify-content: center;
+  // display: flex;
+  margin: 0 auto;
+}
+
+.description {
+  font-size: 14px;
+  text-align: center;
+  margin: 20px;
+}
