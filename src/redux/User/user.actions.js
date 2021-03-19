@@ -1,3 +1,5 @@
+// for dispatching
+
 import userTypes from "./user.types";
 
 export const setCurrentUser = user => ({

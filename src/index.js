@@ -12,9 +12,11 @@ import store from "./redux/createStore";
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* REdux */}
+    {/* Redux */}
     <Provider store={store}>
+      {/* React Router */}
       <BrowserRouter>
+        {/* Main app */}
         <App />
       </BrowserRouter>
     </Provider>

@@ -20,8 +20,7 @@ import {connect} from "react-redux"
 import {setCurrentUser} from "./redux/User/user.actions"
 
 
-function App({setCurrentUser}) {
-  // const [currentUser, setCurrentUser] = useState(null);
+function App({currentUser, setCurrentUser}) {
 
   // check if current user
   useEffect(() => {
@@ -38,6 +37,7 @@ function App({setCurrentUser}) {
         setCurrentUser(null);
       }
     })
+    console.log(currentUser, "current user");
     
   }, [])
   return (
@@ -45,13 +45,13 @@ function App({setCurrentUser}) {
       <div className="app__main">
         <Switch >
           <Route path='/registration' 
-          render={() => setCurrentUser ? <Redirect to="/"/> : (
+          render={() => currentUser ? <Redirect to="/"/> : (
             <MainLayout >
               <Registration />
             </MainLayout>
           )} />
           <Route path='/phonelogin' 
-          render={() => setCurrentUser ? <Redirect to="/"/> : (
+          render={() => currentUser ? <Redirect to="/"/> : (
             <MainLayout >
               <LoginWithPhone />
             </MainLayout>
@@ -63,7 +63,7 @@ function App({setCurrentUser}) {
             </MainLayout>
           )} />
           <Route path='/login' 
-          render={() => setCurrentUser ? <Redirect to="/"/> : (
+          render={() => currentUser ? <Redirect to="/"/> : (
             <MainLayout >
               <Login />
             </MainLayout>

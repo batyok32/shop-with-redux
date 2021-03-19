@@ -13,6 +13,7 @@ function SignUp() {
     const [errors, setErrors] = useState([]);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [progress, setProgress] = useState(false)
+
     const configAuthWrapper = {
         headline:"Registration"
     }
@@ -25,8 +26,7 @@ function SignUp() {
         }
         setProgress(true)
         try {
-
-            const {user}= await auth.createUserWithEmailAndPassword(email, password);
+            const user = await auth.createUserWithEmailAndPassword(email, password);
             await handleUserProfile(user, { displayName })
         }catch(err) {
             setErrors(err)

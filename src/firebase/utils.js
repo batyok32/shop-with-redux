@@ -26,7 +26,6 @@ export const handleUserProfile = async (userAuth, additionalData) => {
 
     const userRef = firestore.doc(`users/${uid}`);
     const snapshot = await userRef.get();
-    console.log("there is user in db and i will get it", userRef);
     // if there not user in db
     if(!snapshot.exists) {
         console.log("there is no user in db");
@@ -43,7 +42,7 @@ export const handleUserProfile = async (userAuth, additionalData) => {
         } catch (err) {
             // console.log(err);
         }
-    }
+    } else {console.log("there is user in db and i will get it", userRef);}
     return userRef;
 
 };

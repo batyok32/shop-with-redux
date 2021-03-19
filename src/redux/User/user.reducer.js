@@ -1,3 +1,5 @@
+// user.reducer.js >>> reducer it define wich functionality must happen 
+
 import userTypes from "./user.types";
 
 const INITIAL_STATE  ={
