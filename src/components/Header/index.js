@@ -1,16 +1,21 @@
 import React from 'react';
 import "./styles.scss";
-import {connect} from "react-redux"
 import logo from "./../../assets/logo.jpeg"
+
+// Redux
+import {useSelector} from "react-redux"
+// React Router
 import {Link} from 'react-router-dom'
+// Firebase
 import { auth} from "./../../firebase/utils"
 
-
-const mapStateToProps = ({user}) => ({
+// It wont be passed to props because it isnt mapstatetoprops
+const mapState = ({user}) => ({
     currentUser: user.currentUser
 })
 
-function Header({currentUser}) {
+function Header() {
+    const {currentUser} = useSelector(mapState)
     return (
         <header className='header'>
             <div className="header__wrap">
@@ -57,4 +62,4 @@ function Header({currentUser}) {
 }
 
 
-export default connect(mapStateToProps, null)(Header)
+export default Header;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./styles.scss"
 
 // Components
@@ -9,10 +9,18 @@ import AuthWrapper from "./../AuthWrapper"
 // Firebase
 // import { auth} from "./../../firebase/utils"
 import firebase from "./../../firebase/utils"
+import {useDispatch, useSelector} from "react-redux"
+import { phoneLogin, resetAllAuhtForms } from '../../redux/User/user.actions'
+import { withRouter } from 'react-router-dom'
 
+const mapState = ({user}) => ({
+    phoneLoginSuccess:user.phoneLoginSuccess,
+    phoneLoginError: user.phoneLoginError
+})
 
-function PhoneLogin () {
-
+function PhoneLogin (props) {
+    const dispatch = useDispatch();
+    const {phoneLoginSuccess, phoneLoginError} = useSelector(mapState)
     // Form inputs
     const [phoneNumber, setPhoneNumber] = useState('');
     // const [code, setCode] = useState('');
@@ -24,53 +32,68 @@ function PhoneLogin () {
 
 
 
+
     // To define a header
     const configAuthWrapper ={
         headline: "Login With Phone Number"
     }
 
-    // const confirm = async () => {
-    //     onSignInSubmit.then((confirmationResult) => {
+    useEffect(() => {
+        if (phoneLoginSuccess){
+            dispatch(resetAllAuhtForms());
+            props.history.push('/')
+        }
+    }, [phoneLoginSuccess])
+    useEffect(() => {
+        if (phoneLoginError){
+            setErrors(phoneLoginError)
+        }
+    }, [phoneLoginError])
+
+    const onSignInSubmit =  (e) => {
+        e.preventDefault();
+        setProgress(true)
+        const recaptcha = new firebase.auth.RecaptchaVerifier("recaptcha-container");
+        dispatch(phoneLogin({phoneNumber, recaptcha}))
+        setProgress(false)
+        // const recaptcha = new firebase.auth.RecaptchaVerifier("recaptcha-container");
+        // firebase.auth().signInWithPhoneNumber(phoneNumber, recaptcha).then((confirmationResult) => {
+        //     console.log(confirmationResult, "Confirmation Result")
+        //     const code = prompt("ENter a code>>> ")
+        //     confirmationResult.confirm(code).then((result) => {
+        //         console.log("SUUCCCESSS", result.user);
+                
+        //     }).catch((err) => {
+        //         setErrors(err)
+        //         console.log(err, "second error");
+        //     })
+        // }).catch((err)=> {
+        //     setErrors(err)
+        //     console.log("First eroor", err);}
+        // ) 
+    }
+
+   
+    // const onSignInSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setProgress(true)
+    //     console.log("Captcha started");
+    //     const recaptcha = new firebase.auth.RecaptchaVerifier("recaptcha-container");
+    //     firebase.auth().signInWithPhoneNumber(phoneNumber, recaptcha).then((confirmationResult) => {
     //         console.log(confirmationResult, "Confirmation Result")
-            
+    //         const code = prompt("ENter a code>>> ")
     //         confirmationResult.confirm(code).then((result) => {
     //             console.log("SUUCCCESSS", result.user);
-    //         }
-            
-    //         ).catch((err) => {
+                
+    //         }).catch((err) => {
     //             setErrors(err)
     //             console.log(err, "second error");
     //         })
-    //         setTimer(false)
-    //     }
-    //     ).catch((err)=> {
+    //     }).catch((err)=> {
     //         setErrors(err)
     //         console.log("First eroor", err);}
     //     ) 
-    // setTimer(false)
-        
     // }
-    // submit
-    const onSignInSubmit = async (e) => {
-        e.preventDefault();
-        setProgress(true)
-        console.log("Captcha started");
-        const recaptcha = new firebase.auth.RecaptchaVerifier("recaptcha-container");
-        firebase.auth().signInWithPhoneNumber(phoneNumber, recaptcha).then((confirmationResult) => {
-            console.log(confirmationResult, "Confirmation Result")
-            const code = prompt("ENter a code>>> ")
-            confirmationResult.confirm(code).then((result) => {
-                console.log("SUUCCCESSS", result.user);
-                
-            }).catch((err) => {
-                setErrors(err)
-                console.log(err, "second error");
-            })
-        }).catch((err)=> {
-            setErrors(err)
-            console.log("First eroor", err);}
-        ) 
-    }
     
     
 
@@ -133,4 +156,4 @@ function PhoneLogin () {
 
 
 
-export default PhoneLogin
+export default withRouter(PhoneLogin) 

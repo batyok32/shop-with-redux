@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./styles.scss"
+// Redux
+import {useDispatch, useSelector} from 'react-redux'
+import {signUpUser, resetAllAuhtForms} from './../../redux/User/user.actions'
 
 // React router
 import {withRouter} from 'react-router-dom'
@@ -9,8 +12,13 @@ import FormInput from "./../forms/FormInput"
 import Button from './../forms/Button';
 import AuthWrapper from '../AuthWrapper';
 
+const mapState = ({ user }) => ({
+    signUpSuccess:user.signUpSuccess,
+    signUpError:user.signUpError
+})
+
 // Firebase
-import {auth, handleUserProfile} from "./../../firebase/utils"
+// import {auth, handleUserProfile} from "./../../firebase/utils"
 
 
 function SignUp(props) {
@@ -25,10 +33,29 @@ function SignUp(props) {
     const [errors, setErrors] = useState([]);
     const [progress, setProgress] = useState(false)
 
+    // Redux
+    const dispatch = useDispatch();
+    const {signUpSuccess, signUpError} = useSelector(mapState)
+
     // to define a header
     const configAuthWrapper = {
         headline:"Registration"
     }
+
+    useEffect(() => {
+        if (signUpSuccess){
+            resetForm();
+            dispatch(resetAllAuhtForms())
+            props.history.push('/'); 
+        }
+    }, [signUpSuccess])
+    
+    useEffect(() => {
+        if (signUpError){
+            setErrors(signUpError);
+        }
+        
+    }, [signUpError])
 
     // reset a form
     const resetForm = () => {
@@ -40,27 +67,16 @@ function SignUp(props) {
     }
 
     // to Define a submit function
-    const handleSubmit = async (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
-        // Validating form
-        if (password !== confirmPassword) {
-            const err = ['Password don\'t match']
-            setErrors(err)
-            return
-        }
-
         setProgress(true)
-        try {
-            const user = await auth.createUserWithEmailAndPassword(email, password);
-            await handleUserProfile(user, { displayName })
-            resetForm();
-            props.history.push('/')
-        }catch(err) {
-            // catched error
-            setErrors(err);
-        }
-        // Function ended
-        setProgress(false);
+        dispatch(signUpUser({
+            displayName,
+            email,
+            password,
+            confirmPassword
+        }))
+        setProgress(false)
 
     }
     return (
@@ -68,7 +84,8 @@ function SignUp(props) {
             <AuthWrapper {...configAuthWrapper}>
                 
                 <div className="signUp__formWrap">
-                    {progress ? <h5 className='error'>Loading</h5> : ( <h5 className='error'>{errors.message}</h5>)}
+                    {/* {errors ? <h5>{errors}</h5> : <h5></h5>} */}
+                    {progress ? <h5 className='error'>Loading</h5> : ( <h5 className='error'>{errors}</h5>)}
                     <form onSubmit={handleSubmit} action="">
                         <FormInput 
                             label="Full Name"

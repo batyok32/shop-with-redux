@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./styles.scss"
 
 // Components
@@ -8,15 +8,22 @@ import AuthWrapper from "./../AuthWrapper"
 
 
 // Firebase
-import { signInWithGoogle, auth} from "./../../firebase/utils"
+// import { signInWithGoogle, auth} from "./../../firebase/utils"
 
 // react router
 import {Link, withRouter} from "react-router-dom"
 
+// Redux
+import {useDispatch, useSelector} from 'react-redux'
+import {signInUser, signInWithGoogle, resetAllAuhtForms} from './../../redux/User/user.actions'
+
+const mapState = ({user}) => ({
+    signInSuccess:user.signInSuccess,
+    signInError:user.signInError,
+
+})
 
 function SignIn (props) {
-
-    // Define react states
 
     // Used for input
     const [email, setEmail] = useState('');
@@ -32,6 +39,29 @@ function SignIn (props) {
         headline: "Login"
     }
 
+    // Redux
+    const dispatch = useDispatch()
+    const {signInSuccess, signInError} = useSelector(mapState)
+
+    useEffect(() => {
+        if (signInSuccess) {
+            resetForm();
+            dispatch(resetAllAuhtForms());
+            props.history.push('/')
+        } 
+        
+    }, [signInSuccess])
+
+    useEffect(() => {
+        if (signInError) {
+            setErrors(signInError)
+        } 
+        
+    }, [signInError])
+    const handleGoogleSignIn = () => {
+        dispatch(signInWithGoogle());
+    }
+
     const resetForm = () => {
         setEmail('');
         setPassword('');
@@ -41,28 +71,20 @@ function SignIn (props) {
     }
 
     // Define a submit
-    const handleSubmit = async (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
         setProgress(true)
-        try {
-            await auth.signInWithEmailAndPassword(email, password);
-            resetForm();
-            props.history.push('/')
-        }catch (err) {
-            setErrors(err)
-            console.log(err, "ERROR from sign in component");
-        }
         setProgress(false)
-
+        dispatch(signInUser({email, password}));
+        setProgress(false)
     }
     
 
     return (
         <AuthWrapper {...configAuthWrapper}>
              <div className="signIn">
-                    
                     <div className="signIn__formWrap">
-                        {progress ? <h5 className='error'>Loading</h5> : ( <h5 className='error'>{errors.message}</h5>)}
+                        {progress ? <h5 className='error'>Loading</h5> : ( <h5 className='error'>{errors}</h5>)}
                    
                         <form onSubmit={handleSubmit} action="">
                             <FormInput 
@@ -92,7 +114,7 @@ function SignIn (props) {
                             </div>
                             <div className="signIn__socialSignIn">
                                 <div className="signIn__row">
-                                    <Button onClick={signInWithGoogle}>
+                                    <Button onClick={handleGoogleSignIn}>
                                         Sign in with Google
                                     </Button>
                                 </div>

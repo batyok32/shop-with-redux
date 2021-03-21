@@ -172,7 +172,7 @@ REDUX
 
 
 ===========================================================================
-Tutorial 7 >>> react hooks
+Tutorial 7 >>> Custom React Hook
 ==========================
 Custom React Hook
 1. Create a folder hoc >>> higher order component
@@ -246,3 +246,187 @@ ROOL: customHooks must start with `use`
       export default Dashboard
 0. KNowledge : witRouter gives access to history
   
+=================================================================
+ADMIn
+1. go to firebase database and set for user userRules(array)
+Ex: 
+string "user", string "admin"
+
+
+
+
+
+
+
+
+================================================================
+Redux hooks
+
+useSelector ==> get data from redux
+useDispatch ==> to dispatch info that will update redux store
+
+1. go to header and remove connect
+(connect is working but redux functions works better together )
+            # "Using useSelector"
+  1.1 "change export line": export default Header 
+  1.2 "change mapStateToProps into mapState==> "because it is not going to 
+    be passed into props
+  1.3  "import useSelector hook from react-redux"
+  1.4 "replace define props like that:" const {currentUser} = props
+    replace it with const {currentUser} = useSelector(mapState)
+  1.5 and it will work
+2. go to signin component
+      # DISPATCH
+    2.1 "we want to remove code from submit and put it in dispatch"
+    2.2 "remove async"
+    2.3 go to user.actions.js and create new action 
+    which will take email and password and async dispatch
+    EX=:
+    export const signInUser = ({email, password}) => async dispatch => {
+      try {
+          await auth.signInWithEmailAndPassword(email, password);
+          dispatch({
+              type:userTypes.SIGN_IN_SUCCESS,
+              payload:true
+          });
+      }catch (err) {
+          // setErrors(err)
+          console.log(err, "ERROR from sign in component");
+      }
+    }
+
+3. GO TO signin js 
+    3.1 import {useDispatch} from react-redux
+    3.2 import {signInUser} from "./../../redux/User/user.actions"
+    3.3 const dispatch = useDispatch() >>> it will give access to dispatch
+    3.4 go to submit function and dispatch(signInUser({email, password})) 
+        and we will pass email and password
+    3.5 "AND IT IS ALL TO DISPATCH an action" but we didnt finish
+    3.6 import {auth} from "firebase/utils" to user.actions
+4. Go to user.types 
+    4.1 and create new type
+    4.2 and Call it SIGN_IN_SUCCESS
+    4.3 go to reducer
+    4.4 create new initial signInSuccess:false
+    4.5 create new reducer
+    EX=
+      case userTypes.SIGN_IN_SUCCESS:
+        return {
+          ...state,
+          signInSuccess: action.payload
+        } 
+    4.6 go to user.actions and use signInSuccess dispatch
+      EX=
+      dispatch({
+        type:userTypes.SIGN_IN_SUCCESS,
+        payload:true
+      });
+5. go to sign in component 
+    5.1 import useSelector hook
+    5.2 const mapState = ({user}) => ({
+      signInSuccess:user.signInSuccess
+    })
+     5.3 const {signInSuccess} = useSelector(mapState)
+    5.4 import useEffect
+    5.5 create useEffect function to listen to signInSuccess
+    like if it is true function goes
+    EX=
+    useEffect(() => {
+      if (signInSuccess) {
+          resetForm();
+          props.history.push('/')
+      } 
+      
+    }, [signInSuccess])
+    and here we will call other function 
+    that will happen after successfully login
+0. we cant use dispatch in dispatch because of that we will use redux-thunk
+6. npm i redux-thunk
+    6.1 pass this middleware to middlewares in createStore
+    import thunk from 'redux-thunk'
+    [thunk, logger]
+"""AND WE FINISH REFACTORING SIGN IN COMPONNENT"""
+"REFACTOR OF SIGN UP COMPONENT"
+1. as usual remove async remove other code only event and dispatch
+2. create an action >> signUpUser
+ 2.1 that will take displayName, email, password, confirmPassword and also take async dispatch
+ 2.2 copy code from Signup and put it in user.actions
+3. import useDispatch and signUpUser
+3.1 const dispatch = useDispatch
+4. use dispatch in submit function 
+4.1 and make it like that
+  const handleSubmit = e => {
+    e.preventDefault();
+    setProgress(true)
+    dispatch(signUpUser({
+        displayName,
+        email,
+        password,
+        confirmPassword
+    }))
+  }
+4.2 copy all code and paste it in actions
+5. trying to setErrors
+5.1 go to userTypes and add and aditional type 
+SIGN_UP_ERROR: "SIGN_UP_ERROR"
+5.2 go to reducer and create new initial state
+SignUpError: []
+5.3 add an additional case SIGN_UP_ERROR
+6. go to useractions and dispatch SignUpError error
+6.1 import handleUserProfile
+6.2 create new userTypes for success
+6.3 create new case for success
+6.4 dispatch success action in actions 
+7. go to Signup component
+7.1 import useEffect
+7.2 const mapState get user >> SignUpError, signUpSuccess
+7.3 destructure from mapState >> SignUpError, signUpSuccess
+7.4 use useEffect that will listen to signUpSuccess, and error
+EX=
+useEffect(() => {
+  if (signUpSuccess){
+      resetForm();
+      props.history.push('/'); 
+  }
+}, [signUpSuccess])
+
+useEffect(() => {
+  if (signUpError){
+      setErrors(signUpError.message);
+      console.log(errors, "THIS IS EROR");
+  }
+  
+}, [signUpError])
+"""AND WE REFACTURED SIGN UP COMPONENT NEXT EMAIL PASSWORD"""
+1. remove as usual async and all code from submit
+2. create an action 
+2.1 resetPassword and take email and async dispatch
+2.2 paste all code from submit to action
+2.3 create two types in userTypes: for success, and error
+2.4 create initials for that
+2.5 create cases 
+2.6 dispatch an action in dispatch for success and error
+2.7 go to emailpassowrd component and import useDispatch, useSelector. useEffect, resetPassword
+2.8 const mapState =({user}) => ({resetPasswordSuccess:user.resetPasswordSuccess...})
+2.9 call useSelector in a function
+2.10 call dispatch with useDispatch
+2.11 dispatch resetPassword({email})
+2.12 use 2 useEffect hooks for success, and error
+Array.isArray(resetPasswordError) && resetPasswordError.length > 0
+"""AND THATS ALL and we will refacture app.js""" 
+1. import useSelector
+2. remove connect and paste it like that export default App'
+2.1 Remove mapStateToProps and mapDispatchToProps
+2.2 const dispatch = useDispatch
+2.3 wrap setCurrentUser with dispatch
+3. go to sign in component and create new function
+3.1 const handleGoogleSignIn = () => {
+  dispatch();
+}
+
+
+====================================================================
+Tutorial 9 REDUX SAGA
+redux saga= >>> alternative to redux thunk it 
+gives to use async action
+but it allows you to take all this async code out of your action creators

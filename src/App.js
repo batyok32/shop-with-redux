@@ -24,28 +24,34 @@ import Dashboard from './pages/Dashboard'
 import {auth, handleUserProfile} from "./firebase/utils"
 
 // Redux
-import {connect} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import {setCurrentUser} from "./redux/User/user.actions"
 
+const mapState = ({user}) => ({
+  currentUser:user.currentUser
+});
 
-function App({currentUser, setCurrentUser}) {
 
+
+function App() {
+  const dispatch = useDispatch()
+  const {currentUser} = useSelector(mapState)
   // check if current user
   useEffect(() => {
     const authListener = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         const userRef = await handleUserProfile(userAuth);
         userRef.onSnapshot(snapshot => {
-          setCurrentUser({
+          dispatch(setCurrentUser({
             id: snapshot.id,
             ...snapshot.data()
-          })
+          }))
         })
       } else {
-        setCurrentUser(null);
+        dispatch(setCurrentUser(null));
       }
     })
-    console.log(currentUser, "current user");
+    // console.log(currentUser, "current user");
     return ()=> {
       authListener();
     }
@@ -100,12 +106,5 @@ function App({currentUser, setCurrentUser}) {
   );
 }
 
-const mapStateToProps = ({user}) => ({
-  currentUser:user.currentUser
-});
 
-const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
